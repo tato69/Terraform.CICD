@@ -46,6 +46,6 @@ fi
 
 apt-get install -y git
 mkdir -p /tmp/puppet/
-git clone https://github.com/tato69/jenkinsariso001a /tmp/puppet/jenkinsariso001a
+git clone https://github.com/tato69/apacheariso001a /tmp/puppet/apacheariso001a
 puppet module install puppetlabs-vcsrepo --modulepath=/tmp/puppet/
-puppet apply --modulepath=/tmp/puppet/ -e 'include jenkinsariso001a'
+puppet apply --modulepath=/tmp/puppet/ -e 'include apacheariso001a'
