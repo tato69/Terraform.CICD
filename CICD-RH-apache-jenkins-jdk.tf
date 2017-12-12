@@ -101,8 +101,8 @@ type_handler_version = "2.0"
 
 settings = <<SETTINGS
 {
-"fileUris": ["https://raw.githubusercontent.com/tato69/Terraform.CICD/master/pp_agent_jenkins-rh.bash"],
-"commandToExecute": "sudo ./pp_agent_jenkins-rh.bash"
+"fileUris": ["https://raw.githubusercontent.com/tato69/Terraform.CICD/master/pp_agent_jenkins.bash"],
+"commandToExecute": "sudo ./pp_agent_jenkins.bash"
 }
 SETTINGS
 #closing VM
@@ -190,8 +190,8 @@ type_handler_version = "2.0"
 
 settings = <<SETTINGS
 {
-"fileUris": ["https://raw.githubusercontent.com/tato69/Terraform.CICD/master/pp_agent_apache-rh.bash"],
-"commandToExecute": "sudo ./pp_agent_apache-rh.bash"
+"fileUris": ["https://raw.githubusercontent.com/tato69/Terraform.CICD/master/pp_agent_apache.bash"],
+"commandToExecute": "sudo ./pp_agent_apache.bash"
 }
 SETTINGS
 #closing VM
@@ -283,8 +283,8 @@ type_handler_version = "2.0"
 
 settings = <<SETTINGS
 {
-"fileUris": ["https://raw.githubusercontent.com/tato69/Terraform.CICD/master/pp_agent_jdk-rh.bash"],
-"commandToExecute": "sudo ./pp_agent_jdk-rh.bash"
+"fileUris": ["https://raw.githubusercontent.com/tato69/Terraform.CICD/master/pp_agent_jdk.bash"],
+"commandToExecute": "sudo ./pp_agent_jdk.bash"
 }
 SETTINGS
 #closing VM
