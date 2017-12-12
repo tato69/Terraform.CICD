@@ -46,7 +46,7 @@ resource "azurerm_network_interface" "test" {
 
 
 
-resource "azurerm_virtual_machine" "test" {
+resource "azurerm_virtual_machine" "jenkins" {
   name                  = "CI-CD-pipeline-test-vm01"
   location              = "West US 2"
   resource_group_name   = "${azurerm_resource_group.test.name}"
@@ -80,17 +80,17 @@ os_profile_linux_config {
     disable_password_authentication = false
 }
 
-  provisioner "file" {
-    source      = "./script.sh"
-    destination = "/tmp/script.sh"
-  }
+provisioner "file" {
+  source      = "./pp_agent_jenkins.bash"
+  destination = "/tmp/pp_agent_jenkins.bash"
+}
 
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/script.sh",
-      "/tmp/script.sh args",
-    ]
-  }
+provisioner "remote-exec" {
+  inline = [
+    "chmod +x /tmp/pp_agent_jenkins.bash",
+    "/tmp/pp_agent_jenkins.bash",
+  ]
+}
 
 }
 
