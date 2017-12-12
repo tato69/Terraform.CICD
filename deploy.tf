@@ -289,12 +289,6 @@ SETTINGS
 #closing VM
 }
 
-
-output "jdk_public_ip" {
-value = "${azurerm_public_ip.jdk.ip_address}"
-}
-
-
 resource "azurerm_virtual_machine_extension" "jdk" {
 name = "CustomscriptExtension"
 location = "West US 2"
