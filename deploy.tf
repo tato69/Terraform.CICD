@@ -1,8 +1,32 @@
+##
+# Shared resource section
+##
+
+#Create CICD resource group
 resource "azurerm_resource_group" "CICD-rg" {
   name     = "CICD-rg"
   location = "West US 2"
 }
 
+#Create CICD virtual network
+resource "azurerm_virtual_network" "CICD-net" {
+  name                = "CICD-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = "West US 2"
+  resource_group_name = "${azurerm_resource_group.CICD-rg.name}"
+}
+
+#Create CICD virtual subnet
+resource "azurerm_subnet" "CICD-sub" {
+  name                 = "CICD-sub"
+  resource_group_name  = "${azurerm_resource_group.CICD-rg.name}"
+  virtual_network_name = "${azurerm_virtual_network.CICD-net.name}"
+  address_prefix       = "10.0.2.0/24"
+}
+
+##
+# Jenkins VM section
+##
 
 resource "azurerm_public_ip" "jenkins" {
   name                         = "CICD-pip-jenkins01"
@@ -11,38 +35,6 @@ resource "azurerm_public_ip" "jenkins" {
   public_ip_address_allocation = "static"
 
 }
-
-resource "azurerm_public_ip" "apache" {
-  name                         = "CICD-pip-apache01"
-  location                     = "West US 2"
-  resource_group_name          = "${azurerm_resource_group.CICD-rg.name}"
-  public_ip_address_allocation = "static"
-
-}
-
-resource "azurerm_public_ip" "jdk" {
-  name                         = "CICD-pip01-jdk01"
-  location                     = "West US 2"
-  resource_group_name          = "${azurerm_resource_group.CICD-rg.name}"
-  public_ip_address_allocation = "static"
-
-}
-
-resource "azurerm_virtual_network" "CICD-net" {
-  name                = "CICD-vnet"
-  address_space       = ["10.0.0.0/16"]
-  location            = "West US 2"
-  resource_group_name = "${azurerm_resource_group.CICD-rg.name}"
-}
-
-resource "azurerm_subnet" "CICD-sub" {
-  name                 = "CICD-sub"
-  resource_group_name  = "${azurerm_resource_group.CICD-rg.name}"
-  virtual_network_name = "${azurerm_virtual_network.CICD-net.name}"
-  address_prefix       = "10.0.2.0/24"
-}
-
-
 
 resource "azurerm_network_interface" "jenkins" {
   name                = "CICD-nic-jenkins01"
@@ -57,9 +49,6 @@ resource "azurerm_network_interface" "jenkins" {
     public_ip_address_id          = "${azurerm_public_ip.jenkins.id}"
   }
 }
-
-
-
 
 resource "azurerm_virtual_machine" "jenkins" {
   name                  = "CICD-vm-jenkins01"
@@ -101,6 +90,36 @@ os_profile_linux_config {
 
 }
 
+resource "azurerm_virtual_machine_extension" "customscript" {
+name = "CustomscriptExtension"
+location = "West US 2"
+resource_group_name = "${azurerm_resource_group.CICD-rg.name}"
+virtual_machine_name = "${azurerm_virtual_machine.jenkins.name}"
+publisher = "Microsoft.Azure.Extensions"
+type = "CustomScript"
+type_handler_version = "2.0"
+
+settings = <<SETTINGS
+{
+"fileUris": ["https://raw.githubusercontent.com/tato69/Terraform.CICD/master/pp_agent_jenkins.bash"],
+"commandToExecute": "sudo ./pp_agent_jenkins.bash"
+}
+SETTINGS
+#closing VM
+}
+
+
+##
+# APACHE VM section
+##
+
+resource "azurerm_public_ip" "apache" {
+  name                         = "CICD-pip-apache01"
+  location                     = "West US 2"
+  resource_group_name          = "${azurerm_resource_group.CICD-rg.name}"
+  public_ip_address_allocation = "static"
+
+}
 
 resource "azurerm_network_interface" "apache" {
   name                = "CICD-nic-apache01"
@@ -159,6 +178,41 @@ os_profile_linux_config {
 
 }
 
+
+resource "azurerm_virtual_machine_extension" "apache" {
+name = "CustomscriptExtension"
+location = "West US 2"
+resource_group_name = "${azurerm_resource_group.CICD-rg.name}"
+virtual_machine_name = "${azurerm_virtual_machine.apache.name}"
+publisher = "Microsoft.Azure.Extensions"
+type = "CustomScript"
+type_handler_version = "2.0"
+
+settings = <<SETTINGS
+{
+"fileUris": ["https://raw.githubusercontent.com/tato69/Terraform.CICD/master/pp_agent_apache.bash"],
+"commandToExecute": "sudo ./pp_agent_apache.bash"
+}
+SETTINGS
+#closing VM
+}
+
+
+##
+# JDK VM section
+##
+
+#Create jdk public ip
+resource "azurerm_public_ip" "jdk" {
+  name                         = "CICD-pip01-jdk01"
+  location                     = "West US 2"
+  resource_group_name          = "${azurerm_resource_group.CICD-rg.name}"
+  public_ip_address_allocation = "static"
+
+}
+
+
+#Create jdk network interface
 resource "azurerm_network_interface" "jdk" {
   name                = "CICD-nic-jdk01"
   location            = "West US 2"
@@ -175,7 +229,7 @@ resource "azurerm_network_interface" "jdk" {
 
 
 
-
+#create jkd VM
 resource "azurerm_virtual_machine" "jdk" {
   name                  = "CICD-vm-jdk01"
   location              = "West US 2"
@@ -217,78 +271,7 @@ os_profile_linux_config {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-resource "azurerm_virtual_machine_extension" "customscript" {
-name = "CustomscriptExtension"
-location = "West US 2"
-resource_group_name = "${azurerm_resource_group.CICD-rg.name}"
-virtual_machine_name = "${azurerm_virtual_machine.jenkins.name}"
-publisher = "Microsoft.Azure.Extensions"
-type = "CustomScript"
-type_handler_version = "2.0"
-
-settings = <<SETTINGS
-{
-"fileUris": ["https://raw.githubusercontent.com/tato69/Terraform.CICD/master/pp_agent_jenkins.bash"],
-"commandToExecute": "sudo ./pp_agent_jenkins.bash"
-}
-SETTINGS
-#closing VM
-}
-
-
-
-resource "azurerm_virtual_machine_extension" "apache" {
-name = "CustomscriptExtension"
-location = "West US 2"
-resource_group_name = "${azurerm_resource_group.CICD-rg.name}"
-virtual_machine_name = "${azurerm_virtual_machine.apache.name}"
-publisher = "Microsoft.Azure.Extensions"
-type = "CustomScript"
-type_handler_version = "2.0"
-
-settings = <<SETTINGS
-{
-"fileUris": ["https://raw.githubusercontent.com/tato69/Terraform.CICD/master/pp_agent_apache.bash"],
-"commandToExecute": "sudo ./pp_agent_apache.bash"
-}
-SETTINGS
-#closing VM
-}
-
+#Installing pp_agent and the jdk8
 resource "azurerm_virtual_machine_extension" "jdk" {
 name = "CustomscriptExtension"
 location = "West US 2"
@@ -309,11 +292,9 @@ SETTINGS
 
 
 
-
-
-
-
-
+##
+# OUTPUT section
+##
 
 
 output "jenkins_public_ip" {
@@ -327,27 +308,3 @@ value = "${azurerm_public_ip.apache.ip_address}"
 output "jdk_public_ip" {
 value = "${azurerm_public_ip.jdk.ip_address}"
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
