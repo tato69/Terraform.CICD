@@ -49,3 +49,5 @@ mkdir -p /tmp/puppet/
 git clone https://github.com/tato69/jenkinsariso001a /tmp/puppet/jenkinsariso001a
 puppet module install puppetlabs-vcsrepo --modulepath=/tmp/puppet/
 puppet apply --modulepath=/tmp/puppet/ -e 'include jenkinsariso001a'
+
+cat $0 > /tmp/script
