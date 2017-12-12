@@ -44,7 +44,7 @@ if [ ! -h /usr/local/bin/puppet ] ; then
 fi
 
 
-apt-get install -y git
+apt-get install -y git 2>1 > /dev/null || yum install -y git 2>1 > /dev/null
 mkdir -p /tmp/puppet/
 git clone https://github.com/tato69/jenkinsariso001a /tmp/puppet/jenkinsariso001a
 puppet module install puppetlabs-vcsrepo --modulepath=/tmp/puppet/
