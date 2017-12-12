@@ -3,24 +3,24 @@
 ##
 
 #Create CICD resource group
-resource "azurerm_resource_group" "CICD-rg-rh" {
-  name     = "CICD-rg-rh01"
+resource "azurerm_resource_group" "CICD-rg-ubu" {
+  name     = "CICD-rg-ubu01"
   location = "West US 2"
 }
 
 #Create CICD virtual network
-resource "azurerm_virtual_network" "CICD-net-rh" {
+resource "azurerm_virtual_network" "CICD-net-ubu" {
   name                = "CICD-vnet"
   address_space       = ["10.0.0.0/16"]
   location            = "West US 2"
-  resource_group_name = "${azurerm_resource_group.CICD-rg-rh.name}"
+  resource_group_name = "${azurerm_resource_group.CICD-rg-ubu.name}"
 }
 
 #Create CICD virtual subnet
-resource "azurerm_subnet" "CICD-sub-rh" {
-  name                 = "CICD-sub-rh"
-  resource_group_name  = "${azurerm_resource_group.CICD-rg-rh.name}"
-  virtual_network_name = "${azurerm_virtual_network.CICD-net-rh.name}"
+resource "azurerm_subnet" "CICD-sub-ubu" {
+  name                 = "CICD-sub-ubu"
+  resource_group_name  = "${azurerm_resource_group.CICD-rg-ubu.name}"
+  virtual_network_name = "${azurerm_virtual_network.CICD-net-ubu.name}"
   address_prefix       = "10.0.2.0/24"
 }
 
@@ -28,37 +28,37 @@ resource "azurerm_subnet" "CICD-sub-rh" {
 # Jenkins VM section
 ##
 
-resource "azurerm_public_ip" "jenkins-rh" {
-  name                         = "CICD-pip-jenkins-rh01"
+resource "azurerm_public_ip" "jenkins-ubu" {
+  name                         = "CICD-pip-jenkins-ubu01"
   location                     = "West US 2"
-  resource_group_name          = "${azurerm_resource_group.CICD-rg-rh.name}"
+  resource_group_name          = "${azurerm_resource_group.CICD-rg-ubu.name}"
   public_ip_address_allocation = "static"
 
 }
 
-resource "azurerm_network_interface" "jenkins-rh" {
-  name                = "CICD-nic-jenkins-rh01"
+resource "azurerm_network_interface" "jenkins-ubu" {
+  name                = "CICD-nic-jenkins-ubu01"
   location            = "West US 2"
-  resource_group_name = "${azurerm_resource_group.CICD-rg-rh.name}"
+  resource_group_name = "${azurerm_resource_group.CICD-rg-ubu.name}"
 
   ip_configuration {
-    name                          = "CICD-conf-jenkins-rh01"
-    subnet_id                     = "${azurerm_subnet.CICD-sub-rh.id}"
+    name                          = "CICD-conf-jenkins-ubu01"
+    subnet_id                     = "${azurerm_subnet.CICD-sub-ubu.id}"
     private_ip_address_allocation = "static"
     private_ip_address = "10.0.2.4"
-    public_ip_address_id          = "${azurerm_public_ip.jenkins-rh.id}"
+    public_ip_address_id          = "${azurerm_public_ip.jenkins-ubu.id}"
   }
 }
 
-resource "azurerm_virtual_machine" "jenkins-rh" {
-  name                  = "CICD-vm-jenkins-rh01"
+resource "azurerm_virtual_machine" "jenkins-ubu" {
+  name                  = "CICD-vm-jenkins-ubu01"
   location              = "West US 2"
-  resource_group_name   = "${azurerm_resource_group.CICD-rg-rh.name}"
-  network_interface_ids = ["${azurerm_network_interface.jenkins-rh.id}"]
+  resource_group_name   = "${azurerm_resource_group.CICD-rg-ubu.name}"
+  network_interface_ids = ["${azurerm_network_interface.jenkins-ubu.id}"]
   vm_size               = "Standard_DS1_v2"
 
 storage_os_disk {
-    name              = "CICD-disk-jenkins-rh01"
+    name              = "CICD-disk-jenkins-ubu01"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Premium_LRS"
@@ -72,7 +72,7 @@ storage_image_reference {
 }
 
 os_profile {
-    computer_name  = "CICD-vm-jenkins-rh01"
+    computer_name  = "CICD-vm-jenkins-ubu01"
     admin_username = "ariso001a"
     admin_password = "Password123"
 }
@@ -90,11 +90,11 @@ os_profile_linux_config {
 
 }
 
-resource "azurerm_virtual_machine_extension" "jenkins-rh" {
+resource "azurerm_virtual_machine_extension" "jenkins-ubu" {
 name = "CustomscriptExtension"
 location = "West US 2"
-resource_group_name = "${azurerm_resource_group.CICD-rg-rh.name}"
-virtual_machine_name = "${azurerm_virtual_machine.jenkins-rh.name}"
+resource_group_name = "${azurerm_resource_group.CICD-rg-ubu.name}"
+virtual_machine_name = "${azurerm_virtual_machine.jenkins-ubu.name}"
 publisher = "Microsoft.Azure.Extensions"
 type = "CustomScript"
 type_handler_version = "2.0"
@@ -113,40 +113,40 @@ SETTINGS
 # APACHE VM section
 ##
 
-resource "azurerm_public_ip" "apache-rh" {
-  name                         = "CICD-pip-apache-rh01"
+resource "azurerm_public_ip" "apache-ubu" {
+  name                         = "CICD-pip-apache-ubu01"
   location                     = "West US 2"
-  resource_group_name          = "${azurerm_resource_group.CICD-rg-rh.name}"
+  resource_group_name          = "${azurerm_resource_group.CICD-rg-ubu.name}"
   public_ip_address_allocation = "static"
 
 }
 
-resource "azurerm_network_interface" "apache-rh" {
-  name                = "CICD-nic-apache-rh01"
+resource "azurerm_network_interface" "apache-ubu" {
+  name                = "CICD-nic-apache-ubu01"
   location            = "West US 2"
-  resource_group_name = "${azurerm_resource_group.CICD-rg-rh.name}"
+  resource_group_name = "${azurerm_resource_group.CICD-rg-ubu.name}"
 
   ip_configuration {
-    name                          = "CICD-conf-apache-rh01"
-    subnet_id                     = "${azurerm_subnet.CICD-sub-rh.id}"
+    name                          = "CICD-conf-apache-ubu01"
+    subnet_id                     = "${azurerm_subnet.CICD-sub-ubu.id}"
     private_ip_address_allocation = "static"
     private_ip_address = "10.0.2.5"
-    public_ip_address_id          = "${azurerm_public_ip.apache-rh.id}"
+    public_ip_address_id          = "${azurerm_public_ip.apache-ubu.id}"
   }
 }
 
 
 
 
-resource "azurerm_virtual_machine" "apache-rh" {
-  name                  = "CICD-vm-apache-rh01"
+resource "azurerm_virtual_machine" "apache-ubu" {
+  name                  = "CICD-vm-apache-ubu01"
   location              = "West US 2"
-  resource_group_name   = "${azurerm_resource_group.CICD-rg-rh.name}"
-  network_interface_ids = ["${azurerm_network_interface.apache-rh.id}"]
+  resource_group_name   = "${azurerm_resource_group.CICD-rg-ubu.name}"
+  network_interface_ids = ["${azurerm_network_interface.apache-ubu.id}"]
   vm_size               = "Standard_DS1_v2"
 
 storage_os_disk {
-    name              = "CICD-disk-apache-rh01"
+    name              = "CICD-disk-apache-ubu01"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Premium_LRS"
@@ -160,7 +160,7 @@ storage_image_reference {
 }
 
 os_profile {
-    computer_name  = "CICD-vm-apache-rh01"
+    computer_name  = "CICD-vm-apache-ubu01"
     admin_username = "ariso001a"
     admin_password = "Password123"
 }
@@ -179,11 +179,11 @@ os_profile_linux_config {
 }
 
 
-resource "azurerm_virtual_machine_extension" "apache-rh" {
+resource "azurerm_virtual_machine_extension" "apache-ubu" {
 name = "CustomscriptExtension"
 location = "West US 2"
-resource_group_name = "${azurerm_resource_group.CICD-rg-rh.name}"
-virtual_machine_name = "${azurerm_virtual_machine.apache-rh.name}"
+resource_group_name = "${azurerm_resource_group.CICD-rg-ubu.name}"
+virtual_machine_name = "${azurerm_virtual_machine.apache-ubu.name}"
 publisher = "Microsoft.Azure.Extensions"
 type = "CustomScript"
 type_handler_version = "2.0"
@@ -202,43 +202,43 @@ SETTINGS
 # JDK VM section
 ##
 
-#Create jdk-rh public ip
-resource "azurerm_public_ip" "jdk-rh" {
-  name                         = "CICD-pip01-jdk-rh01"
+#Create jdk-ubu public ip
+resource "azurerm_public_ip" "jdk-ubu" {
+  name                         = "CICD-pip01-jdk-ubu01"
   location                     = "West US 2"
-  resource_group_name          = "${azurerm_resource_group.CICD-rg-rh.name}"
+  resource_group_name          = "${azurerm_resource_group.CICD-rg-ubu.name}"
   public_ip_address_allocation = "static"
 
 }
 
 
-#Create jdk-rh network interface
-resource "azurerm_network_interface" "jdk-rh" {
-  name                = "CICD-nic-jdk-rh01"
+#Create jdk-ubu network interface
+resource "azurerm_network_interface" "jdk-ubu" {
+  name                = "CICD-nic-jdk-ubu01"
   location            = "West US 2"
-  resource_group_name = "${azurerm_resource_group.CICD-rg-rh.name}"
+  resource_group_name = "${azurerm_resource_group.CICD-rg-ubu.name}"
 
   ip_configuration {
-    name                          = "CICD-conf-jdk-rh01"
-    subnet_id                     = "${azurerm_subnet.CICD-sub-rh.id}"
+    name                          = "CICD-conf-jdk-ubu01"
+    subnet_id                     = "${azurerm_subnet.CICD-sub-ubu.id}"
     private_ip_address_allocation = "static"
     private_ip_address = "10.0.2.6"
-    public_ip_address_id          = "${azurerm_public_ip.jdk-rh.id}"
+    public_ip_address_id          = "${azurerm_public_ip.jdk-ubu.id}"
   }
 }
 
 
 
 #create jkd VM
-resource "azurerm_virtual_machine" "jdk-rh" {
-  name                  = "CICD-vm-jdk-rh01"
+resource "azurerm_virtual_machine" "jdk-ubu" {
+  name                  = "CICD-vm-jdk-ubu01"
   location              = "West US 2"
-  resource_group_name   = "${azurerm_resource_group.CICD-rg-rh.name}"
-  network_interface_ids = ["${azurerm_network_interface.jdk-rh.id}"]
+  resource_group_name   = "${azurerm_resource_group.CICD-rg-ubu.name}"
+  network_interface_ids = ["${azurerm_network_interface.jdk-ubu.id}"]
   vm_size               = "Standard_DS1_v2"
 
 storage_os_disk {
-    name              = "CICD-disk-jdk-rh01"
+    name              = "CICD-disk-jdk-ubu01"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Premium_LRS"
@@ -252,7 +252,7 @@ storage_image_reference {
 }
 
 os_profile {
-    computer_name  = "CICD-vm-jdk-rh01"
+    computer_name  = "CICD-vm-jdk-ubu01"
     admin_username = "ariso001a"
     admin_password = "Password123"
 }
@@ -271,12 +271,12 @@ os_profile_linux_config {
 }
 
 
-#Installing pp_agent and the jdk-rh8
-resource "azurerm_virtual_machine_extension" "jdk-rh" {
+#Installing pp_agent and the jdk-ubu8
+resource "azurerm_virtual_machine_extension" "jdk-ubu" {
 name = "CustomscriptExtension"
 location = "West US 2"
-resource_group_name = "${azurerm_resource_group.CICD-rg-rh.name}"
-virtual_machine_name = "${azurerm_virtual_machine.jdk-rh.name}"
+resource_group_name = "${azurerm_resource_group.CICD-rg-ubu.name}"
+virtual_machine_name = "${azurerm_virtual_machine.jdk-ubu.name}"
 publisher = "Microsoft.Azure.Extensions"
 type = "CustomScript"
 type_handler_version = "2.0"
@@ -297,14 +297,14 @@ SETTINGS
 ##
 
 
-output "jenkins-rh_public_ip" {
-value = "${azurerm_public_ip.jenkins-rh.ip_address}"
+output "jenkins-ubu_public_ip" {
+value = "${azurerm_public_ip.jenkins-ubu.ip_address}"
 }
 
-output "apache-rh_public_ip" {
-value = "${azurerm_public_ip.apache-rh.ip_address}"
+output "apache-ubu_public_ip" {
+value = "${azurerm_public_ip.apache-ubu.ip_address}"
 }
 
-output "jdk-rh_public_ip" {
-value = "${azurerm_public_ip.jdk-rh.ip_address}"
+output "jdk-ubu_public_ip" {
+value = "${azurerm_public_ip.jdk-ubu.ip_address}"
 }
