@@ -4,7 +4,7 @@
 
 #Create CICD resource group
 resource "azurerm_resource_group" "CICD-rg-rh" {
-  name     = "CICD-rg-rh02"
+  name     = "CICD-rg-rh01"
   location = "West US 2"
 }
 
