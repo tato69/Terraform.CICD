@@ -111,7 +111,7 @@ resource "azurerm_network_interface" "apache" {
     name                          = "CICD-conf-apache01"
     subnet_id                     = "${azurerm_subnet.CICD-sub.id}"
     private_ip_address_allocation = "static"
-    private_ip_address = "10.0.2.4"
+    private_ip_address = "10.0.2.5"
     public_ip_address_id          = "${azurerm_public_ip.apache.id}"
   }
 }
@@ -168,7 +168,7 @@ resource "azurerm_network_interface" "jdk" {
     name                          = "CICD-conf-jdk01"
     subnet_id                     = "${azurerm_subnet.CICD-sub.id}"
     private_ip_address_allocation = "static"
-    private_ip_address = "10.0.2.4"
+    private_ip_address = "10.0.2.6"
     public_ip_address_id          = "${azurerm_public_ip.jdk.id}"
   }
 }
