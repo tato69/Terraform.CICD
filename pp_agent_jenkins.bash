@@ -47,7 +47,6 @@ fi
 apt-get install -y git 2>1 > /dev/null || yum install -y git 2>1 > /dev/null
 mkdir -p /tmp/puppet/
 git clone https://github.com/tato69/jenkinsariso001a /tmp/puppet/jenkinsariso001a
-puppet module install puppetlabs-vcsrepo --modulepath=/tmp/puppet/
-sudo puppet apply --modulepath=/tmp/puppet/ -e 'include jenkinsariso001a'
+/usr/local/bin/puppet module install puppetlabs-vcsrepo --modulepath=/tmp/puppet/
+/usr/local/bin/puppet apply --modulepath=/tmp/puppet/ -e 'include jenkinsariso001a'
 
-cat $0 > /tmp/script
