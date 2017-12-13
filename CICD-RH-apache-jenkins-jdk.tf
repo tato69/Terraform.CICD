@@ -90,7 +90,7 @@ os_profile_linux_config {
 
 }
 
-resource "azurerm_virtual_machine_extension" "jenkins" {
+resource "azurerm_virtual_machine_extension" "jenkins-rh" {
 name = "CustomscriptExtension"
 location = "West US 2"
 resource_group_name = "${azurerm_resource_group.CICD-rg-rh.name}"
